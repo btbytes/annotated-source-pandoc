@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Pradeep Gowda" />
+  <title>Annotated source code with Pandoc and highlight.js</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="style.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.0/build/styles/default.min.css">
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.0/build/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<header id="title-block-header">
+<h1 class="title">Annotated source code with Pandoc and highlight.js</h1>
+<p class="author">Pradeep Gowda</p>
+<p class="date">Jun 12, 2020</p>
+</header>
+<p>You can use <code>pandoc</code> to render a source file interspersed with annotations. I find this approach useful when studying unfamiliar code – written by some one else, in a language I’m unfamiliar with (this experiment started when I had to reimplment a 5 year old solution written in Perl5, with no tests and documentation).</p>
+<p>Step 1: copy the source code you are planning to study to a markdown file (extension <code>.md</code>)</p>
+<p>Step 2: “Select all” the text and <code>[TAB]</code> one level (4 characters).</p>
+<p>Step 3: Start writing your annotations at column 0 (beginning of the line)</p>
+<p>Step 4: Compile the annotated file into a easy to read HTML file (especially useful if you are trying to “present”/ code-review with your team), with the following command:</p>
+<pre><code>pandoc source.md --standalone -B B.inc --css=style.css -o annotated.html</code></pre>
+<p>where, <code>B.inc</code> contains the following css and js line to help with syntax highlighting:</p>
+<pre><code>&lt;link rel=&quot;stylesheet&quot;
+  href=&quot;https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.0/build/styles/default.min.css&quot;&gt;
+&lt;script src=&quot;https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.0/build/highlight.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;hljs.initHighlightingOnLoad();&lt;/script&gt;</code></pre>
+<h2 id="annotated-csv2html-script">Annotated csv2html script</h2>
+<p>Use Python3. You can use <code>#!/usr/bin/python3</code>, but the location of python interpreter may be different on another machine.</p>
+<pre><code>#!/usr/bin/env python3</code></pre>
+<p>This program has only one (standard library) dependency:</p>
+<pre><code>import csv</code></pre>
+<p>Even though this is a small program, and can be written at the “top-level” or “main” method, we will write a seperate method. This way, you can call it from another program or write test cases (This program does not have a test).</p>
+<pre><code>def csv2html(csvfile, delimiter, quotechar, caption, title, header=False):</code></pre>
+<p>I’ve inlined the HTML generation because</p>
+<ol type="1">
+<li><p>the template is quite small</p></li>
+<li><p>Python doesn’t ship with HTML generation libraries.</p></li>
+<li><p>See my <code>csv2html.nim</code> project to see how I’m using Nim’s source code filters to seperate HTML from the main code.</p>
+<pre><code> print(&#39;&#39;&#39;&lt;!doctype html&gt;&lt;head&gt;&lt;style type=&quot;text/css&quot;&gt;
+             table {
+               border-collapse: collapse;
+               margin-bottom: 10px;
+             }
+
+             td,
+             th {
+               padding: 6px;
+               text-align: left;
+             }
+
+             thead {
+               border-bottom: 1px solid var(--border);
+             }
+
+             tfoot {
+               border-top: 1px solid var(--border);
+             }
+
+             tbody tr:nth-child(even) {
+               background-color: var(--background-alt);
+             }&lt;/style&gt;&lt;/head&gt;&lt;body&gt;
+             &#39;&#39;&#39;)
+ if title:
+     print(f&#39;&#39;&#39;&lt;h1&gt;{title}&lt;/h1&gt;&#39;&#39;&#39;)
+ print(&#39;&lt;table&gt;&#39;)
+ if caption:
+     print(f&#39;&lt;caption&gt;{caption}&lt;/caption&gt;&#39;)
+ with open(csvfile, &#39;r&#39;) as f:
+     reader = csv.reader(f, delimiter=delimiter, quotechar=quotechar)
+     for idx, row in enumerate(reader):
+         if idx == 0 and header:
+             td = &#39;th&#39;
+         else:
+             td = &#39;td&#39;
+         print(&#39;&lt;tr&gt;&#39;)
+         for col in row:
+             print(f&#39;&lt;{td}&gt;{col}&lt;/{td}&gt;&#39;)
+         print(&#39;&lt;/tr&gt;&#39;)
+     print(&#39;&lt;/table&gt;&#39;)</code></pre></li>
+</ol>
+<p>Using <code>argparse</code> library to provide a nice command line user experience is easy and helpful thing to do. Even if its for your own use, six months from now, you don’t have to remember if the optionX was the first argument to the program or the third.</p>
+<pre><code>if __name__ == &#39;__main__&#39;:
+    import argparse
+    parser = argparse.ArgumentParser(description=&#39;CSV to HTML converter.&#39;)
+    parser.add_argument(&#39;csvfile&#39;)
+    parser.add_argument(
+        &#39;--delimiter&#39;, help=&#39;Field delimiter. Default is , .&#39;, default=&#39;,&#39;)
+    parser.add_argument(
+        &#39;--quotechar&#39;, help=&#39;Quote Character. Deault is nothing&#39;)
+    parser.add_argument(
+        &#39;--title&#39;, help=&#39;Page title. Will be printed in h1 tag.&#39;)
+    parser.add_argument(&#39;--caption&#39;, help=&#39;Table caption.&#39;)
+    parser.add_argument(
+        &#39;--header&#39;,
+        action=&#39;store_true&#39;,
+        help=&#39;data has header. First row will be &quot;th&quot;.&#39;)
+    args = parser.parse_args()
+    csv2html(args.csvfile, args.delimiter, args.quotechar,
+             args.caption, args.title, args.header)</code></pre>
+<p>Caveat: This way of annotating the file is for “code reading” (which we all should be doing more often), and does not make any claims about “literate programming” where you can expect things like “tangling”.</p>
+<p>Hopefully this way of annotating the programs for study will prove useful to you.</p>
+<p>Let me know what you think – <a href="https://twitter.com/btbytes">@btbytes</a></p>
+<hr />
+<p>The source files used in this presentation:</p>
+<ul>
+<li><a href="index.md">index.md</a></li>
+<li><a href="B.inc">B.inc</a></li>
+<li><a href="Makefile">Makefile</a></li>
+<li><a href="style.css">style.css</a></li>
+</ul>
+</body>
+</html>
