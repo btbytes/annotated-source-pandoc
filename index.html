@@ -29,18 +29,19 @@ href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.0/build/styles/de
 <p class="author">Pradeep Gowda</p>
 <p class="date">Jun 12, 2020</p>
 </header>
-<p>You can use <code>pandoc</code> to render a source file interspersed with annotations. I find this approach useful when studying unfamiliar code – written by some one else, in a language I’m unfamiliar with (this experiment started when I had to reimplment a 5 year old solution written in Perl5, with no tests and documentation).</p>
+<p>You can use <code>pandoc</code> to render a source file interspersed with annotations. I find this approach useful when studying unfamiliar code – written by some one else, in a language I’m unfamiliar with (this experiment started when I had to reimplement a 5 year old solution written in Perl5, with no tests and documentation).</p>
 <p>Step 1: copy the source code you are planning to study to a markdown file (extension <code>.md</code>)</p>
 <p>Step 2: “Select all” the text and <code>[TAB]</code> one level (4 characters).</p>
 <p>Step 3: Start writing your annotations at column 0 (beginning of the line)</p>
 <p>Step 4: Compile the annotated file into a easy to read HTML file (especially useful if you are trying to “present”/ code-review with your team), with the following command:</p>
 <pre><code>pandoc source.md --standalone -B B.inc --css=style.css -o annotated.html</code></pre>
-<p>where, <code>B.inc</code> contains the following css and js line to help with syntax highlighting:</p>
+<p>where, <code>B.inc</code> contains the following css and js lines to help with syntax highlighting:</p>
 <pre><code>&lt;link rel=&quot;stylesheet&quot;
   href=&quot;https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.0/build/styles/default.min.css&quot;&gt;
 &lt;script src=&quot;https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.0/build/highlight.min.js&quot;&gt;&lt;/script&gt;
 &lt;script&gt;hljs.initHighlightingOnLoad();&lt;/script&gt;</code></pre>
-<h2 id="annotated-csv2html-script">Annotated csv2html script</h2>
+<h2 id="example-annotated-csv2html-script">Example: Annotated csv2html script</h2>
+<p>(The original source code can be found <a href="https://github.com/btbytes/csv2html">here</a>)</p>
 <p>Use Python3. You can use <code>#!/usr/bin/python3</code>, but the location of python interpreter may be different on another machine.</p>
 <pre><code>#!/usr/bin/env python3</code></pre>
 <p>This program has only one (standard library) dependency:</p>
@@ -51,7 +52,7 @@ href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.0/build/styles/de
 <ol type="1">
 <li><p>the template is quite small</p></li>
 <li><p>Python doesn’t ship with HTML generation libraries.</p></li>
-<li><p>See my <code>csv2html.nim</code> project to see how I’m using Nim’s source code filters to seperate HTML from the main code.</p>
+<li><p>See my <a href="https://github.com/btbytes/csv2html.nim">csv2html.nim</a> project to see how I’m using Nim’s source code filters to seperate HTML from the main code.</p>
 <pre><code> print(&#39;&#39;&#39;&lt;!doctype html&gt;&lt;head&gt;&lt;style type=&quot;text/css&quot;&gt;
              table {
                border-collapse: collapse;

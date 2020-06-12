@@ -3,7 +3,7 @@
 % Jun 12, 2020
 
 You can use `pandoc` to render a source file interspersed with annotations. I find this approach useful when studying
-unfamiliar code -- written by some one else, in a language I'm unfamiliar with (this experiment started when I had to reimplment a 5 year old solution written in Perl5, with no tests and documentation).
+unfamiliar code -- written by some one else, in a language I'm unfamiliar with (this experiment started when I had to reimplement a 5 year old solution written in Perl5, with no tests and documentation).
 
 Step 1: copy the source code you are planning to study to a markdown file (extension `.md`)
 
@@ -15,14 +15,16 @@ Step 4: Compile the annotated file into a easy to read HTML file (especially use
 
 	pandoc source.md --standalone -B B.inc --css=style.css -o annotated.html
 
-where, `B.inc` contains the following css and js line to help with syntax highlighting:
+where, `B.inc` contains the following css and js lines to help with syntax highlighting:
 
 	<link rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.0/build/styles/default.min.css">
 	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.0/build/highlight.min.js"></script>
 	<script>hljs.initHighlightingOnLoad();</script>
 
-## Annotated csv2html script
+## Example: Annotated csv2html script
+
+(The original source code can be found [here](https://github.com/btbytes/csv2html))
 
 Use Python3. You can use `#!/usr/bin/python3`, but the location of python interpreter may be different on another machine.
 
@@ -44,7 +46,7 @@ I've inlined the HTML generation because
 
 1. the template is quite small
 2. Python doesn't ship with HTML generation libraries.
-3. See my `csv2html.nim` project to see how I'm using Nim's source code filters to seperate HTML from the main code.
+3. See my [csv2html.nim](https://github.com/btbytes/csv2html.nim) project to see how I'm using Nim's source code filters to seperate HTML from the main code.
 
 	    print('''<!doctype html><head><style type="text/css">
 	                table {
