@@ -115,7 +115,7 @@ Caveat: This way of annotating the file is for "code reading" (which we all shou
 
 Hopefully this way of annotating the programs for study will prove useful to you.
 
-Let me know what you think -- [\@btbytes](https://twitter.com/btbytes)
+Let me know what you think -- on twitter [\@btbytes](https://twitter.com/btbytes) or the [github](https://github.com/btbytes/annotated-source-pandoc) repo for this page.
 
 
 ----
